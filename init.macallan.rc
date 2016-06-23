@@ -29,6 +29,7 @@ on init
     symlink /storage/emulated/legacy /sdcard
     symlink /storage/emulated/legacy /mnt/sdcard
     symlink /storage/emulated/legacy /storage/sdcard0
+    symlink /storage/emulated/legacy /storage/sdcard1
     symlink /mnt/shell/emulated/0 /storage/emulated/legacy
 
  # make the pathes for the external media mounts
