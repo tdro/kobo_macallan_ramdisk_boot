@@ -8,8 +8,6 @@ ro.allow.mock.location=0
 ro.debuggable=1
 ro.zygote=zygote32
 ro.dalvik.vm.native.bridge=0
-ro.product.manufacturer=kobo
-ro.product.model=macallan
 
 service.adb.root=1
 persist.sys.usb.config=mtp,adb
