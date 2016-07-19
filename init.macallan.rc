@@ -115,6 +115,8 @@ on boot
 # LED
     chown system system /sys/class/leds/white_led_en1/brightness
     chmod 0664 /sys/class/leds/white_led_en1/brightness
+    chown system system /sys/class/leds/white_led_en1/trigger
+    chmod 0644 /sys/class/leds/white_led_en1/trigger
     write /sys/class/leds/white_led_en1/brightness 0
 
 # Sensor
@@ -301,6 +303,7 @@ on boot
 
 # RECOVERY
     chmod 0666 /cache/recovery/last_locale
+    write /proc/sys/kernel/panic 3
 
 # nvdps
     chown system system /sys/class/graphics/fb0/device/nvdps
