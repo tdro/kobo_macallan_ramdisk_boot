@@ -1,5 +1,4 @@
 # CyanogenMod Extras
-
 import /init.superuser.rc
 
 on init
@@ -132,6 +131,13 @@ service sysinit /system/bin/sysinit
     oneshot
     disabled
 
+# bugreport is triggered by holding down volume down, volume up and power
+#service bugreport /system/bin/dumpstate -d -p -B \
+#        -o /data/data/com.android.shell/files/bugreports/bugreport
+#    oneshot
+#    disabled
+#    keycodes 114 115 116
+
 # adb over network
 on property:service.adb.tcp.port=5555
     stop adbd
@@ -164,3 +170,4 @@ on property:sys.io.scheduler=cfq
 # Set slice_idle to 0 for BFQ
 on property:sys.io.scheduler=bfq
     write /sys/block/mmcblk0/queue/iosched/slice_idle 0
+

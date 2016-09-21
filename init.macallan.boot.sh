@@ -1,8 +1,8 @@
 #!/system/bin/sh
 
 # set persistent FPS limits
-setprop persist.sys.NV_FPSLIMIT 1000;
-setprop persist.tegra.NV_FPSLIMIT 1000;
+setprop persist.sys.NV_FPSLIMIT 30;
+setprop persist.tegra.NV_FPSLIMIT 30;
 
 # set alsa volume maximum
 alsa_amixer sset HP 31;

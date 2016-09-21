@@ -16,7 +16,7 @@ on init
     mkdir /mnt/shell 0700 shell shell
     mkdir /mnt/media_rw 0700 media_rw media_rw
     mkdir /storage 0751 root sdcard_r
-    
+
     mkdir /mnt/shell/emulated 0700 shell shell
     mkdir /storage/emulated 0555 root root
 
@@ -48,15 +48,9 @@ on fs
     export LD_PRELOAD /system/lib/libsigchain.so
 
 on post-fs-data
-    mkdir /data/misc/wifi 0770 wifi wifi
-    mkdir /data/misc/wifi/sockets 0770 wifi wifi
     mkdir /data/misc/wifi/firmware 0770 wifi wifi
-    mkdir /data/misc/dhcp 0770 dhcp dhcp
     mkdir /data/nvcam 0700 media camera
-    chown dhcp dhcp /data/misc/dhcp
-
     mkdir /data/misc/wminput 0776 system system
-
     mkdir /data/media 0770 media_rw media_rw
 
     # Set indication (checked by vold) that we have finished this action
@@ -194,17 +188,14 @@ on boot
     write /sys/devices/system/cpu/cpu1/cpufreq/scaling_governor interactive
     write /sys/devices/system/cpu/cpu2/cpufreq/scaling_governor interactive
     write /sys/devices/system/cpu/cpu3/cpufreq/scaling_governor interactive
-    write /sys/devices/system/cpu/cpufreq/interactive/boost_factor 0
-    write /sys/devices/system/cpu/cpufreq/interactive/sustain_load 0
     write /sys/devices/system/cpu/cpuquiet/tegra_cpuquiet/enable 1
     write /sys/devices/system/cpu/cpuquiet/current_governor balanced
     write /sys/module/cpuidle_t11x/parameters/cpu_power_gating_in_idle 31
     write /sys/module/cpuidle_t11x/parameters/slow_cluster_power_gating_noncpu 1
     write /sys/module/cpuidle/parameters/power_down_in_idle 0
 
+    chown system system /sys/devices/system/cpu/cpuquiet/tegra_cpuquiet/down_delay
     chown system system /sys/devices/system/cpu/cpuquiet/tegra_cpuquiet/no_lp
-    chown system system /sys/devices/system/cpu/cpufreq/interactive/go_maxspeed_load
-    chown system system /sys/devices/system/cpu/cpufreq/interactive/max_boost
     chown system system /sys/devices/system/cpu/cpu0/cpufreq/scaling_governor
     chown system system /sys/devices/tegradc.0/enable
     chown system system /sys/devices/tegradc.1/enable
@@ -226,11 +217,15 @@ on boot
     chown system system /sys/kernel/debug/clock/override.c2bus/rate
     chown system system /sys/kernel/debug/clock/override.c3bus/state
     chown system system /sys/kernel/debug/clock/override.c3bus/rate
+    chown system system /sys/kernel/debug/clock/override.emc/state
+    chown system system /sys/kernel/debug/clock/override.emc/rate
     
     chmod 0664 /sys/kernel/debug/clock/override.c2bus/state
     chmod 0664 /sys/kernel/debug/clock/override.c2bus/rate
     chmod 0664 /sys/kernel/debug/clock/override.c3bus/state
     chmod 0664 /sys/kernel/debug/clock/override.c3bus/rate
+    chmod 0664 /sys/kernel/debug/clock/override.emc/state
+    chmod 0664 /sys/kernel/debug/clock/override.emc/rate
 
 # Charging stop
     chown system system /sys/devices/platform/tegra11-i2c.0/i2c-0/0-006b/charging_stop
@@ -324,6 +319,13 @@ service set_hwui_params /system/bin/set_hwui_params.sh
     group root
     oneshot
 
+# CPU Boost: Boost CPU on input events
+service input-cfboost /system/bin/input_cfboost_init.sh
+    class main
+    user root
+    group root
+    oneshot
+
 service macallan-boot-sh /system/bin/sh /init.macallan.boot.sh
     class main
     user root
@@ -334,22 +336,22 @@ on property:ro.debuggable=1
     # EMC debug interface
     chmod 666 /sys/kernel/debug/tegra_emc/eack_state
 
-service dhcpcd_wlan0 /system/bin/dhcpcd -aABKL
+service dhcpcd_wlan0 /system/bin/dhcpcd -ABKLG
     class main
     disabled
     oneshot
 
-service dhcpcd_p2p /system/bin/dhcpcd -aABKL
+service dhcpcd_p2p /system/bin/dhcpcd -ABKLG
     class main
     disabled
     oneshot
 
-service dhcpcd_eth0 /system/bin/dhcpcd -ABKL -f/system/etc/dhcpcd/dhcpcd.conf
+service dhcpcd_eth0 /system/bin/dhcpcd -G
     class main
     disabled
     oneshot
 
-service dhcpcd_bnep0 /system/bin/dhcpcd -ABKL
+service dhcpcd_bnep0 /system/bin/dhcpcd -BKLG
     class main
     disabled
     oneshot
@@ -364,7 +366,7 @@ service iprenew_p2p /system/bin/dhcpcd -n
     disabled
     oneshot
 
-service iprenew_eth0 /system/bin/dhcpcd -n
+service iprenew_eth0 /system/bin/dhcpcd -nBK
     class main
     disabled
     oneshot
@@ -381,11 +383,11 @@ service fuse_usbdisk /system/bin/sdcard -u 1023 -g 1023 -d /mnt/media_rw/usbdisk
     disabled
 
 # bugreport is triggered by the VOLUME-DOWN and VOLUME-UP keys
-service bugreport /system/bin/dumpstate -d -v -o /data/storage/bugreports/bugreport
-    class main
-    disabled
-    oneshot
-    keycodes 115 114
+#service bugreport /system/bin/dumpstate -d -v -o /data/storage/bugreports/bugreport
+#    class main
+#    disabled
+#    oneshot
+#    keycodes 115 114
 
 # wifiloader - set the wifi commchip_id accordingly
 service wifiloader /system/bin/wifi_loader.sh
@@ -397,15 +399,15 @@ on property:init.svc.hciattach=stopped
     write /sys/devices/platform/reg-userspace-consumer.1/state disabled
 
 # Prepare TF service
-import init.tf.rc
+#import init.tf.rc
 
 # Enable rbe
 # thresIncr:50  thresIncrCntMax:6  thresDecr:70  thresDecrCntMax:2
 # The change from default is the thresDecrCntMax.  Default is 3.
-service wlbwservice /system/bin/wlbwservice 50 6 70 2
-    class main
-    user system
-    group system inet net_admin
+#service wlbwservice /system/bin/wlbwservice 50 6 70 2
+#    class main
+#    user system
+#    group system inet net_admin
 
 # unified scaling setup
 service ussr_setup /system/bin/ussr_setup.sh
@@ -414,14 +416,6 @@ service ussr_setup /system/bin/ussr_setup.sh
     group root
     oneshot
 
-# Second boot and onwards
-on property:ril.testmode=1
-    stop ril-daemon
-    start ril-daemon-test
-
-on property:ril.testmode=0
-    stop ril-daemon-test
-    start ril-daemon
 
 service p2p_supplicant /system/bin/wpa_supplicant \
     -iwlan0 -Dnl80211 -iwlan0 -c/data/misc/wifi/wpa_supplicant.conf \
