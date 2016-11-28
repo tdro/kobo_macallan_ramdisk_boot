@@ -194,7 +194,7 @@ on boot
     write /sys/devices/system/cpu/cpu2/cpufreq/scaling_governor interactive
     write /sys/devices/system/cpu/cpu3/cpufreq/scaling_governor interactive
     write /sys/devices/system/cpu/cpuquiet/tegra_cpuquiet/enable 0
-    write /sys/devices/system/cpu/cpuquiet/current_governor balanced
+    write /sys/devices/system/cpu/cpuquiet/current_governor userspace
     write /sys/module/cpuidle_t11x/parameters/cpu_power_gating_in_idle 31
     write /sys/module/cpuidle_t11x/parameters/slow_cluster_power_gating_noncpu 1
     write /sys/module/cpuidle/parameters/power_down_in_idle 0
@@ -254,6 +254,9 @@ on boot
     chmod 0664 /sys/kernel/debug/clock/override.emc/state
     chmod 0664 /sys/kernel/debug/clock/override.emc/rate
     chmod 0664 /sys/kernel/cluster/active
+
+    chown system system /sys/module/autosmp/parameters/enabled
+    chmod 0664 /sys/module/autosmp/parameters/enabled
 
 # Charging stop
     chown system system /sys/devices/platform/tegra11-i2c.0/i2c-0/0-006b/charging_stop

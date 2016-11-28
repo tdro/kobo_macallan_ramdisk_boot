@@ -25,8 +25,6 @@ echo "0" > /proc/sys/vm/page-cluster
 echo "3072" > /proc/sys/vm/min_free_kbytes;
 echo "30" > /proc/sys/vm/dirty_ratio;
 echo "10" > /proc/sys/vm/dirty_background_ratio;
-#echo "4194304" >  /proc/sys/vm/dirty_background_bytes;
-#echo "4194304" > /proc/sys/vm/dirty_bytes;
 
 # i/o scheduler
 echo "deadline" > /sys/block/mmcblk0/queue/scheduler;
@@ -43,12 +41,13 @@ echo "100" > /sys/devices/system/cpu/cpuquiet/tegra_cpuquiet/up_delay;
 echo "500" > /sys/devices/system/cpu/cpuquiet/tegra_cpuquiet/down_delay;
 echo "306000" > /sys/devices/system/cpu/cpuquiet/tegra_cpuquiet/idle_bottom_freq;
 echo "696000" > /sys/devices/system/cpu/cpuquiet/tegra_cpuquiet/idle_top_freq;
-#echo "0" > /sys/devices/system/cpu/cpuquiet/balanced/balance_level;
-#echo "500" > /sys/devices/system/cpu/cpuquiet/balanced/down_delay;
-#echo "306000" >/sys/devices/system/cpu/cpuquiet/balanced/idle_bottom_freq;
-#echo "324000" > /sys/devices/system/cpu/cpuquiet/balanced/idle_top_freq;
-#echo "15" > /sys/devices/system/cpu/cpuquiet/balanced/load_sample_rate;
-#echo "1" > /sys/devices/system/cpu/cpuquiet/balanced/up_delay;
+
+# autosmp
+echo "2" > /sys/kernel/autosmp/conf/min_cpus;
+echo "40" > /sys/kernel/autosmp/conf/cpufreq_down;
+echo "80" > /sys/kernel/autosmp/conf/cpufreq_up;
+echo "50" > /sys/kernel/autosmp/conf/delay;
+echo "0" > /sys/kernel/autosmp/conf/scroff_single_core;
 
 # uksm
 echo "0" > /sys/kernel/mm/uksm/run;
