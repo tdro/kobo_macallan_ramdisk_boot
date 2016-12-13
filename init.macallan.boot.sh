@@ -43,12 +43,12 @@ echo "306000" > /sys/devices/system/cpu/cpuquiet/tegra_cpuquiet/idle_bottom_freq
 echo "696000" > /sys/devices/system/cpu/cpuquiet/tegra_cpuquiet/idle_top_freq;
 
 # autosmp
-echo "60" > /sys/kernel/autosmp/conf/cpufreq_down;
+echo "90" > /sys/kernel/autosmp/conf/cpufreq_down;
 echo "99" > /sys/kernel/autosmp/conf/cpufreq_up;
 echo "4" > /sys/kernel/autosmp/conf/cycle_down;
-echo "2" > /sys/kernel/autosmp/conf/cycle_up;
-echo "5" > /sys/kernel/autosmp/conf/delay;
-echo "2" > /sys/kernel/autosmp/conf/min_cpus;
+echo "4" > /sys/kernel/autosmp/conf/cycle_up;
+echo "500" > /sys/kernel/autosmp/conf/delay;
+echo "3" > /sys/kernel/autosmp/conf/min_cpus;
 echo "0" > /sys/kernel/autosmp/conf/scroff_single_core;
 
 # uksm
