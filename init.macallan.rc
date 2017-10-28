@@ -216,7 +216,6 @@ on boot
     chown system system /sys/devices/system/cpu/cpufreq/interactive/timer_slack
     chmod 0664 /sys/devices/system/cpu/cpufreq/interactive/timer_slack
 
-
     chown system system /sys/devices/system/cpu/cpuquiet/tegra_cpuquiet/down_delay
     chown system system /sys/devices/system/cpu/cpuquiet/tegra_cpuquiet/no_lp
     chown system system /sys/devices/system/cpu/cpu0/cpufreq/scaling_governor
@@ -238,7 +237,7 @@ on boot
 
     # TODO: Remove once powerhal takes over app profiles
     chown system system /sys/devices/system/cpu/cpu0/cpufreq/scaling_min_freq
-    
+
     chown system system /sys/kernel/debug/clock/override.c2bus/state
     chown system system /sys/kernel/debug/clock/override.c2bus/rate
     chown system system /sys/kernel/debug/clock/override.c3bus/state
@@ -261,7 +260,7 @@ on boot
 # Charging stop
     chown system system /sys/devices/platform/tegra11-i2c.0/i2c-0/0-006b/charging_stop
     chmod 0664 /sys/devices/platform/tegra11-i2c.0/i2c-0/0-006b/charging_stop
-	
+
 # EEPROM
     chown system system /sys/devices/platform/tegra11-i2c.0/i2c-0/0-0056/als
     chmod 0664 /sys/devices/platform/tegra11-i2c.0/i2c-0/0-0056/als
@@ -313,13 +312,13 @@ on boot
     chmod 0664 /sys/devices/platform/tegra11-i2c.0/i2c-0/0-0056/sn
     chown system system /sys/devices/platform/tegra11-i2c.0/i2c-0/0-0056/cal
     chmod 0664 /sys/devices/platform/tegra11-i2c.0/i2c-0/0-0056/cal
-    
+
 # PMQOS
     write /dev/constraint_online_cpus 0
     write /dev/constraint_cpu_freq 0
     write /dev/constraint_gpu_freq 0
     write /dev/emc_freq_min 0
-	
+
     chown system system /dev/constraint_online_cpus
     chmod 0660 /dev/constraint_online_cpus
     chown system system /dev/constraint_cpu_freq
@@ -423,6 +422,7 @@ service fuse_usbdisk /system/bin/sdcard -u 1023 -g 1023 -d /mnt/media_rw/usbdisk
 # wifiloader - set the wifi commchip_id accordingly
 service wifiloader /system/bin/wifi_loader.sh
     class main
+    disabled
     user root
     group root
 
